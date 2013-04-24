@@ -20,7 +20,7 @@ $ ->
 	scene.draw()
 
 	a.from c
-	c.from b
+	#c.from b
 
 	$p.view.viewSize = new $p.Size(1000, 1000)
 	$p.view.draw()

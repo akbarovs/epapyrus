@@ -36,12 +36,23 @@ class Shape
 
 	move: (pos) ->
 		for arrow in @fromArrows
-			arrow.path.firstSegment.point.x += pos.x
-			arrow.path.firstSegment.point.y += pos.y
+			arrow.points.start.x += pos.x
+			arrow.points.start.y += pos.y
+
+			vec = Utils.minus(arrow.points.end, arrow.points.start).normalize(10)
+			
+			arrow.points.ptr.segments[0].point = Utils.add arrow.points.end, vec.rotate(155)
+			arrow.points.ptr.segments[2].point = Utils.add arrow.points.end, vec.rotate(-155)
 
 		for arrow in @toArrows
-			arrow.path.lastSegment.point.x += pos.x
-			arrow.path.lastSegment.point.y += pos.y
+			arrow.points.end.x += pos.x
+			arrow.points.end.y += pos.y
+			arrow.points.ptr.translate pos
+
+			vec = Utils.minus(arrow.points.end, arrow.points.start).normalize(10)
+			
+			arrow.points.ptr.segments[0].point = Utils.add arrow.points.end, vec.rotate(155)
+			arrow.points.ptr.segments[2].point = Utils.add arrow.points.end, vec.rotate(-155)
 
 class StartEvent extends Shape
 	constructor: (@id, @coord, @data = {}) ->
@@ -69,11 +80,28 @@ class EndEvent extends Shape
 		path.editorObj = @
 
 class Arrow
-	path: undefined
+	points: {}
 
 	constructor: (@id, @from, @to) ->
-		@path = new $p.Path.Line new $p.Point(@from.x, @from.y), new $p.Point(@to.x, @to.y)
-		@path.strokeColor = 'black'
+		end = new $p.Point @to.x, @to.y
+		start = new $p.Point @from.x, @from.y
+		linePath = new $p.Path.Line start, end
+		linePath.strokeColor = 'black'
+		
+		arrowEnd = Utils.minus(end, start).normalize(10)
+
+		arrowPath = new $p.Path([Utils.add(end, arrowEnd.rotate(155)), end, Utils.add(end, arrowEnd.rotate(-155))])
+		arrowPath.strokeWidth = 0.75
+		arrowPath.fillColor = 'black'
+
+		path = new $p.Group [linePath, arrowPath]
+
+		@points =
+			start: linePath.firstSegment.point
+			end: linePath.lastSegment.point
+			ptr: arrowPath
+		
+
 
 
 class UserTask extends Shape
@@ -96,4 +124,4 @@ class UserTask extends Shape
 		@path.editorObj = @
 
 	center: ->
-		@path.getPointAt (@path.length / 15)
+		@path.bounds.leftCenter
