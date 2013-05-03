@@ -1,0 +1,17 @@
+{
+    "name": "BPMN Editor",
+    "palette": [
+        {
+            "type": "user-task",
+            "label": "UserTask"
+        },
+        {
+            "type": "start-event",
+            "label": "Start Event"
+        },
+        {
+            "type": "end-event",
+            "label": "End Event"
+        }
+    ]
+}

@@ -1,12 +1,14 @@
 loadPaper = () ->
-	canvas = document.createElement 'canvas'
-	document.body.appendChild canvas
-	paper.setup canvas
+	paper.setup 'editorCanvas'
 
 	window.$p = paper
-
 $ ->
 	loadPaper()
+	
+	window.$t = $.render
+
+	loadTemplates './templates.html'
+	loadMenu './menu.json'
 
 	a = new StartEvent "test", {x: 100, y: 100}
 	b = new EndEvent "test2", {x: 350, y: 150}
@@ -24,7 +26,7 @@ $ ->
 	i = 1
 	i++
 
-	$p.view.viewSize = new $p.Size(1000, 1000)
+	$p.view.viewSize = new $p.Size(1200, 1200)
 	$p.view.draw()
 
 	tool = new $p.Tool()

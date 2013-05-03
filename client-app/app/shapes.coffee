@@ -46,7 +46,7 @@ class Shape
 		shape.toArrows.push arrow
 
 	select: ->
-		@visiblePath().bounds.selected = true
+		@visiblePath().selected = true
 
 	move: (pos) ->
 		for arrow in @fromArrows
