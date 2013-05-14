@@ -37,10 +37,10 @@ class Shape
 			pth = @path
 
 	center: ->
-		@coord
+		@path.bounds.center
 
 	from: (shape) ->
-		arrow = new Arrow "", @.center(), shape.center(), shape
+		arrow = new Arrow "", @, shape
 
 		@fromArrows.push arrow
 		shape.toArrows.push arrow
@@ -50,15 +50,9 @@ class Shape
 
 	move: (pos) ->
 		for arrow in @fromArrows
-			arrow.points.start.x += pos.x
-			arrow.points.start.y += pos.y
-
 			arrow.move true, pos, @
 
 		for arrow in @toArrows
-			arrow.points.end.x += pos.x
-			arrow.points.end.y += pos.y
-			
 			arrow.move false, pos, @
 
 class StartEvent extends Shape
@@ -118,3 +112,12 @@ class UserTask extends Shape
 
 	center: ->
 		@path.bounds.center
+
+class ShapeFactory
+	objects = 
+		"user-task": UserTask
+		"start-event": StartEvent
+		"end-event": EndEvent
+
+	@from: (type, coord, data) ->
+		shape = new objects[type] "xaxa", coord, data

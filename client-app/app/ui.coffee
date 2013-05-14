@@ -3,7 +3,7 @@ loadMenu = (url) ->
 		dataType: 'json',
 		type: 'GET',
 		success: (resp) ->
-			menuItems =$t.menuItem resp['palette']
+			menuItems = $t.menuItem resp['palette']
 			$('#palette').append menuItems
 			$('.draggable').draggable
 				revert: true,
@@ -18,7 +18,7 @@ loadMenu = (url) ->
 				drop: (event, ui) =>
 					pos = {left: event.pageX, top: event.pageY}
 					cp = $('#editorCanvas').position()
-					elem = new UserTask "zzz", {x: pos.left - cp.left , y: pos.top - cp.top}
+					elem = ShapeFactory.from ui.draggable.attr('data-type'), {x: pos.left - cp.left , y: pos.top - cp.top}
 					elem.draw()
 					$p.view.draw()
 

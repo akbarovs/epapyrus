@@ -11,7 +11,7 @@ $ ->
 	loadMenu './menu.json'
 
 	a = new StartEvent "test", {x: 100, y: 100}
-	b = new EndEvent "test2", {x: 350, y: 150}
+	b = new EndEvent "test2", {x: 350, y: 250}
 	c = new UserTask "userTask", {x: 200, y: 100}
 
 	scene = new Scene
