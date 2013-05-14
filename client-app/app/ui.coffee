@@ -5,6 +5,22 @@ loadMenu = (url) ->
 		success: (resp) ->
 			menuItems =$t.menuItem resp['palette']
 			$('#palette').append menuItems
+			$('.draggable').draggable
+				revert: true,
+				revertDuration: 10,
+				cursorAt:
+					left: 1
+					top: 1,
+				cursor: "default"
+				
+			$('#editorCanvas').droppable
+				accept: ".draggable"
+				drop: (event, ui) =>
+					pos = {left: event.pageX, top: event.pageY}
+					cp = $('#editorCanvas').position()
+					elem = new UserTask "zzz", {x: pos.left - cp.left , y: pos.top - cp.top}
+					elem.draw()
+					$p.view.draw()
 
 
 loadTemplates = (url) ->

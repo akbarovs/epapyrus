@@ -13,7 +13,7 @@
     Arrow.prototype.points = {};
 
     function Arrow(id, from, to, shape) {
-      var arrowEnd, arrowPath, end, intersections, lineEnd, linePath, path, pth, start;
+      var arrowEnd, arrowPath, end, intersections, lineEnd, linePath, mX, mY, middle, path, pth, start;
 
       this.id = id;
       this.from = from;
@@ -21,12 +21,15 @@
       this.shape = shape;
       end = new $p.Point(this.to.x, this.to.y);
       start = new $p.Point(this.from.x, this.from.y);
-      linePath = new $p.Path.Line(start, end);
+      mX = Math.max(this.from.x, this.to.x);
+      mY = this.from.y;
+      middle = new $p.Point(mX, mY);
+      linePath = new $p.Path([start, middle, end]);
       linePath.strokeColor = 'black';
       pth = this.shape.visiblePath();
       intersections = linePath.getIntersections(pth);
       lineEnd = intersections[0].point;
-      arrowEnd = Utils.minus(lineEnd, start).normalize(ArrowParams.LENGTH);
+      arrowEnd = Utils.minus(lineEnd, middle).normalize(ArrowParams.LENGTH);
       arrowPath = new $p.Path([Utils.add(lineEnd, arrowEnd.rotate(ArrowParams.DEGREE)), lineEnd, Utils.add(lineEnd, arrowEnd.rotate(-1 * ArrowParams.DEGREE))]);
       arrowPath.strokeWidth = 0.75;
       arrowPath.fillColor = 'black';
@@ -50,7 +53,7 @@
       intersections = this.points.linePath.getIntersections(pth);
       if (intersections.length > 0) {
         endPoint = intersections[0].point;
-        vec = Utils.minus(endPoint, this.points.start).normalize(ArrowParams.LENGTH);
+        vec = Utils.minus(endPoint, this.points.linePath.segments[1].point).normalize(ArrowParams.LENGTH);
         this.points.ptr.segments[0].point = Utils.add(endPoint, vec.rotate(ArrowParams.DEGREE));
         this.points.ptr.segments[1].point = endPoint;
         return this.points.ptr.segments[2].point = Utils.add(endPoint, vec.rotate(-1 * ArrowParams.DEGREE));
@@ -344,10 +347,38 @@
       dataType: 'json',
       type: 'GET',
       success: function(resp) {
-        var menuItems;
+        var menuItems,
+          _this = this;
 
         menuItems = $t.menuItem(resp['palette']);
-        return $('#palette').append(menuItems);
+        $('#palette').append(menuItems);
+        $('.draggable').draggable({
+          revert: true,
+          revertDuration: 10,
+          cursorAt: {
+            left: 1,
+            top: 1
+          },
+          cursor: "default"
+        });
+        return $('#editorCanvas').droppable({
+          accept: ".draggable",
+          drop: function(event, ui) {
+            var cp, elem, pos;
+
+            pos = {
+              left: event.pageX,
+              top: event.pageY
+            };
+            cp = $('#editorCanvas').position();
+            elem = new UserTask("zzz", {
+              x: pos.left - cp.left,
+              y: pos.top - cp.top
+            });
+            elem.draw();
+            return $p.view.draw();
+          }
+        });
       }
     });
   };
@@ -377,6 +408,10 @@
 
     Utils.minus = function(p1, p2) {
       return new $p.Point(p1.x - p2.x, p1.y - p2.y);
+    };
+
+    Utils.s4 = function() {
+      return Math.floor((1 + Math.random()) * 0x10000).toString(16).substring(1);
     };
 
     return Utils;
