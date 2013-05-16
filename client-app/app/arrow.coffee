@@ -29,7 +29,7 @@ class Arrow
 
 		linePath = new $p.Path segments
 		linePath.strokeColor = 'black'
-		linePath.strokeWidth = 1
+		linePath.strokeWidth = 1.5
 
 		pth = @shapeTo.visiblePath()
 

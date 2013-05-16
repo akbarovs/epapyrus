@@ -37,7 +37,7 @@
       }
       linePath = new $p.Path(segments);
       linePath.strokeColor = 'black';
-      linePath.strokeWidth = 1;
+      linePath.strokeWidth = 1.5;
       pth = this.shapeTo.visiblePath();
       intersections = linePath.getIntersections(pth);
       if (intersections[0] != null) {
